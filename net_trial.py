@@ -12,6 +12,40 @@ network_db = sql.connect(
     database = "network"
 )
 
+# Prompting User Input / Main Menu
+def user_input():
+    print("Configure by: ")
+    print("1. Device Name")
+    print("2. IP Address")
+    user_selection = input()
+
+    if(user_selection == '1'):
+        Device_Selection()
+    if(user_selection == '2'):
+        IP_Selection()
+
+# Device Selection
+def Device_Selection():
+    print("Enter Hardware Name: ")
+    Hardware_Name = input()
+
+# IP Selection
+def IP_Selection():
+    print("Enter IP Address: ")
+    IP_Address = input()
+
+# Initialisation    
+user_input()
+
+
+
+
+db_selector = network_db.cursor()
+db_selector.execute("SELECT * FROM network_hardware")
+db_results = db_selector.fetchall()
+
+print(db_results)
+
 hosts = ['10.10.1.3', '10.10.1.7', '192.168.1.142']
 threads = []
 
