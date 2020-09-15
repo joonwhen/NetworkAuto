@@ -1,8 +1,16 @@
-#parallel_query.py
 from netmiko import ConnectHandler
 from datetime import datetime
 from threading import Thread
+import mysql.connector as sql
 startTime = datetime.now()
+
+# Establish Connection to MySQL Database 
+network_db = sql.connect(
+    host = "localhost",
+    user = "root",
+    password = "password",
+    database = "network"
+)
 
 hosts = ['10.10.1.3', '10.10.1.7', '192.168.1.142']
 threads = []
