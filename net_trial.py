@@ -1,9 +1,7 @@
 from netmiko import ConnectHandler
-from datetime import datetime
 from threading import Thread
 import mysql.connector as sql
 import re
-startTime = datetime.now()
 
 # Establish Connection to MySQL Database 
 network_db = sql.connect(
@@ -48,19 +46,53 @@ def IP_Selection():
 
 # Configuration
 def device_config(IP_Address):
-
+    
+    # Infornation Needed to Connect to Device
+    # Improve on this to extract such information from SQL
     connection = {
         'device_type': 'cisco_ios_telnet',
         'host':   IP_Address,
         'password': 'cisco',
         'secret': 'cisco'
-    }         
-
-    command = "show ip int brief"
+    }     
+    print("Connecting to: " + IP_Address)
     net_connect = ConnectHandler(**connection)
 
-    output = net_connect.send_command(command)
-    print(output)
+    if(net_connect):
+        net_connect.enable()
+        print("Connected to " + IP_Address)
+        while True:
+            print("Enter Command: ")
+            command = input()
+            print("")
+            if(command == 'x'):
+                break
+            else:
+                output = net_connect.send_command_timing(
+                    command_string=command,
+                    strip_prompt=False,
+                    strip_command=True
+                )
+                if "Delete filename" in output:
+                    output += net_connect.send_command_timing(
+                        command_string="\n",
+                        strip_prompt=False,
+                        strip_command=False
+                    )
+                if "confirm" in output:
+                    output += net_connect.send_command_timing(
+                        command_string="y",
+                        strip_prompt=False,
+
+                        strip_command=False
+                    )
+                print(output)
+                
+    else:
+        print("Connection Failed")
+
+
+
 
 # Initialisation    
 user_input()
